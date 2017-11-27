@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageButton
+        android:id="@+id/gps"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:contentDescription="Campus Tour"
+        android:src="@drawable/gps" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gps"
+        android:layout_marginEnd="32dp"
+        android:layout_toStartOf="@+id/textView2"
+        android:gravity="center"
+        android:text="GPS"
+        android:textSize="30sp" />
+
+    <ImageButton
+        android:id="@+id/tour"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/gps"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="18dp"
+        android:layout_toEndOf="@+id/gps"
+        android:src="@drawable/old_well" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/gps"
+        android:gravity="center"
+        android:text="Campus Tour"
+        android:textSize="30sp" />
+
+
+</RelativeLayout>
