@@ -69,10 +69,25 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         mapFragment.getMapAsync(this);
     }
 
+    private void addMarker(LatLng point, String title){
+        mMap.addMarker(new MarkerOptions()
+                .position(point)
+                .title(title));
+    }
+
     private void setUpMap()
     {
         mMap.setOnMarkerClickListener(this);
-        UNCStudentStoreM = mMap.addMarker(new MarkerOptions().position(new LatLng(35.90980520000001,-79.04834340000002)).title("UNC Student Store"));
+        addMarker(new LatLng(35.90980520000001,-79.04834340000002),"UNC Student Store");
+        addMarker(new LatLng(35.907284, -79.045378),"Carolina Alumni Memorial");
+        addMarker(new LatLng(35.913092, -79.051660),"Davie Poplar");
+        addMarker(new LatLng(35.913715, -79.044944),"Forest Theatre");
+        addMarker(new LatLng(35.913823, -79.048991),"Coker Arboretum");
+        addMarker(new LatLng(35.908874, -79.049238),"Morehead-Patterson Bell Tower");
+        addMarker(new LatLng(35.912593, -79.050869),"Old East");
+        addMarker(new LatLng(35.912360, -79.051219),"Old Well");
+        addMarker(new LatLng(35.916313, -79.053548),"Playmakers Theater");
+
     }
 
 
