@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string-array name="places_array">
+        <item>Choose a place</item>
+        <item>Old Well</item>
+        <item>Dean Dome</item>
+        <item>Bell Tower</item>
+        <item>Manning</item>
+        <item>Sitterson</item>
+        <item>Carroll</item>
+    </string-array>
+</resources>
