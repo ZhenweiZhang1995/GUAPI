@@ -4,11 +4,14 @@
 
     <string-array name="places_array">
         <item>Choose a place</item>
+        <item>UNC Student Store</item>
+        <item>Carolina Alumni Memorial</item>
+        <item>Davie Poplar</item>
+        <item>Forest Theatre</item>
+        <item>Coker Arboretum</item>
+        <item>Morehead-Patterson Bell Tower</item>
+        <item>Old East</item>
         <item>Old Well</item>
-        <item>Dean Dome</item>
-        <item>Bell Tower</item>
-        <item>Manning</item>
-        <item>Sitterson</item>
-        <item>Carroll</item>
+        <item>Playmakers Theater</item>
     </string-array>
 </resources>

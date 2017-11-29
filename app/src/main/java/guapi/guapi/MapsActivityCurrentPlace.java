@@ -26,6 +26,8 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,20 +62,11 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         @Override
         public View getInfoWindow(Marker marker) {
-            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_window) {
-                // This means that getInfoContents will be called.
-                return null;
-            }
-            render(marker, mWindow);
-            return mWindow;
+            return null;
         }
 
         @Override
         public View getInfoContents(Marker marker) {
-            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_contents) {
-                // This means that the default info contents will be used.
-                return null;
-            }
             render(marker, mContents);
             return mContents;
         }
@@ -137,6 +130,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private GoogleMap mMap;
     private TextView mTapTextView;
     private Marker mSelectedMarker;
+    private Spinner spinner1;
 
     private Marker uss;
     private Marker cam;
@@ -161,23 +155,45 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
+        spinner1.setOnItemSelectedListener(new ItemSelectedListener());
+
         mTapTextView = (TextView) findViewById(R.id.tap_text);
 
-        mOptions = (RadioGroup) findViewById(R.id.custom_info_window_options);
-        mOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (mLastSelectedMarker != null && mLastSelectedMarker.isInfoWindowShown()) {
-                    // Refresh the info window when the info window's content has changed.
-                    mLastSelectedMarker.showInfoWindow();
-                }
-            }
-        });
+        if (mLastSelectedMarker != null && mLastSelectedMarker.isInfoWindowShown()) {
+            // Refresh the info window when the info window's content has changed.
+            mLastSelectedMarker.showInfoWindow();
+        }
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
+
+
+    public class ItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        //get strings of first item
+        String firstItem = String.valueOf(spinner1.getSelectedItem());
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            if (firstItem.equals(String.valueOf(spinner1.getSelectedItem()))) {
+                // ToDo when first item is selected
+            } else {
+                Toast.makeText(parent.getContext(),
+                        "You have selected : " + parent.getItemAtPosition(pos).toString(),
+                        Toast.LENGTH_LONG).show();
+                // Todo when item is selected by the user
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg) {
+
+        }
+
+    }
+
 
     private Marker addMarker(LatLng point, String title) {
         Marker marker=mMap.addMarker(new MarkerOptions()
