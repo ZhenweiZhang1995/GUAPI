@@ -22,4 +22,42 @@
 
 
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+
+            <RadioGroup
+                android:id="@+id/custom_info_window_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/default_info_window"
+                    android:checked="true"
+                    android:text="default info window" />
+
+                <RadioButton
+                    android:id="@+id/custom_info_contents"
+                    android:text="custom info contents" />
+
+                <RadioButton
+                    android:id="@+id/custom_info_window"
+                    android:text="custom info window" />
+            </RadioGroup>
+        </LinearLayout>
+    </FrameLayout>
+
+
 </FrameLayout>

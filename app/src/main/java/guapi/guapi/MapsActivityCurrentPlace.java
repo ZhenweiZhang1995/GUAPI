@@ -14,12 +14,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +45,82 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener {
 
+    /** Demonstrates customizing the info window and/or its contents. */
+    class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        // These are both viewgroups containing an ImageView with id "badge" and two TextViews with id
+        // "title" and "snippet".
+        private final View mWindow;
+        private final View mContents;
+
+        CustomInfoWindowAdapter() {
+            mWindow = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+            mContents = getLayoutInflater().inflate(R.layout.custom_info_contents, null);
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_window) {
+                // This means that getInfoContents will be called.
+                return null;
+            }
+            render(marker, mWindow);
+            return mWindow;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            if (mOptions.getCheckedRadioButtonId() != R.id.custom_info_contents) {
+                // This means that the default info contents will be used.
+                return null;
+            }
+            render(marker, mContents);
+            return mContents;
+        }
+
+        private void render(Marker marker, View view) {
+            int badge;
+            // Use the equals() method on a Marker to check for equals.  Do not use ==.
+            if (marker.equals(uss)) {
+                badge = R.drawable.bell_tower;
+            } else if (marker.equals(cam)) {
+                badge = R.drawable.bell_tower;
+            } else if (marker.equals(dp)) {
+                badge = R.drawable.bell_tower;
+            } else if (marker.equals(ft)) {
+                badge = R.drawable.bell_tower;
+            } else if (marker.equals(ca)) {
+                badge = R.drawable.bell_tower;
+            } else {
+                // Passing 0 to setImageResource will clear the image view.
+                badge = 0;
+            }
+            ((ImageView) view.findViewById(R.id.badge)).setImageResource(badge);
+
+            String title = marker.getTitle();
+            TextView titleUi = ((TextView) view.findViewById(R.id.title));
+            if (title != null) {
+                // Spannable string allows us to edit the formatting of the text.
+                SpannableString titleText = new SpannableString(title);
+                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
+                titleUi.setText(titleText);
+            } else {
+                titleUi.setText("");
+            }
+
+            String snippet = marker.getSnippet();
+            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
+            if (snippet != null && snippet.length() > 12) {
+                SpannableString snippetText = new SpannableString(snippet);
+                snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
+                snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
+                snippetUi.setText(snippetText);
+            } else {
+                snippetUi.setText("");
+            }
+        }
+    }
+
     /**
      * Request code for location permission request.
      *
@@ -56,6 +138,20 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private TextView mTapTextView;
     private Marker mSelectedMarker;
 
+    private Marker uss;
+    private Marker cam;
+    private Marker dp;
+    private Marker ft;
+    private Marker ca;
+    private Marker mbt;
+    private Marker oe;
+    private Marker ow;
+    private Marker pt;
+
+    private RadioGroup mOptions;
+    private Marker mLastSelectedMarker;
+
+
     private TextView mCameraTextView;
 
     private Marker UNCStudentStoreM;
@@ -67,28 +163,41 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         mTapTextView = (TextView) findViewById(R.id.tap_text);
 
+        mOptions = (RadioGroup) findViewById(R.id.custom_info_window_options);
+        mOptions.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (mLastSelectedMarker != null && mLastSelectedMarker.isInfoWindowShown()) {
+                    // Refresh the info window when the info window's content has changed.
+                    mLastSelectedMarker.showInfoWindow();
+                }
+            }
+        });
+
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-    private void addMarker(LatLng point, String title) {
-        mMap.addMarker(new MarkerOptions()
+    private Marker addMarker(LatLng point, String title) {
+        Marker marker=mMap.addMarker(new MarkerOptions()
                 .position(point)
                 .title(title));
+
+        return marker;
     }
 
     private void setUpMap() {
         mMap.setOnMarkerClickListener(this);
-        addMarker(new LatLng(35.90980520000001, -79.04834340000002), "UNC Student Store");
-        addMarker(new LatLng(35.907284, -79.045378), "Carolina Alumni Memorial");
-        addMarker(new LatLng(35.913092, -79.051660), "Davie Poplar");
-        addMarker(new LatLng(35.913715, -79.044944), "Forest Theatre");
-        addMarker(new LatLng(35.913823, -79.048991), "Coker Arboretum");
-        addMarker(new LatLng(35.908874, -79.049238), "Morehead-Patterson Bell Tower");
-        addMarker(new LatLng(35.912593, -79.050869), "Old East");
-        addMarker(new LatLng(35.912360, -79.051219), "Old Well");
-        addMarker(new LatLng(35.916313, -79.053548), "Playmakers Theater");
+        uss=addMarker(new LatLng(35.90980520000001, -79.04834340000002), "UNC Student Store");
+        cam=addMarker(new LatLng(35.907284, -79.045378), "Carolina Alumni Memorial");
+        dp=addMarker(new LatLng(35.913092, -79.051660), "Davie Poplar");
+        ft=addMarker(new LatLng(35.913715, -79.044944), "Forest Theatre");
+        ca=addMarker(new LatLng(35.913823, -79.048991), "Coker Arboretum");
+        mbt=addMarker(new LatLng(35.908874, -79.049238), "Morehead-Patterson Bell Tower");
+        oe=addMarker(new LatLng(35.912593, -79.050869), "Old East");
+        ow=addMarker(new LatLng(35.912360, -79.051219), "Old Well");
+        pt=addMarker(new LatLng(35.916313, -79.053548), "Playmakers Theater");
 
     }
 
@@ -102,6 +211,9 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         mMap.setOnMyLocationClickListener(this);
         // Set listener for marker click event.  See the bottom of this class for its behavior.
         mMap.setOnMarkerClickListener(this);
+        // Setting an info window adapter allows us to change the both the contents and look of the
+        // info window.
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
         enableMyLocation();
 
         setUpMap();
@@ -198,6 +310,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
 
         mSelectedMarker = marker;
+
+        Toast.makeText(this, marker.getTitle().toString(), Toast.LENGTH_SHORT).show();
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur.
