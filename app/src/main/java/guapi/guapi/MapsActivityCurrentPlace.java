@@ -2,6 +2,7 @@ package guapi.guapi;
 
 
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
@@ -90,11 +91,12 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     }
 
+    private static final LatLng UNC = new LatLng(35.90980520000001,-79.04834340000002);
 
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UNC, 14));
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         enableMyLocation();
