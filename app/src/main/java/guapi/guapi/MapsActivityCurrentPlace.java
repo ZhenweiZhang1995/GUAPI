@@ -37,7 +37,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener{
+        GoogleMap.OnMarkerClickListener {
 
     /**
      * Request code for location permission request.
@@ -54,6 +54,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private GoogleMap mMap;
     private TextView mTapTextView;
+    private Marker mSelectedMarker;
+
     private TextView mCameraTextView;
 
     private Marker UNCStudentStoreM;
@@ -70,28 +72,27 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         mapFragment.getMapAsync(this);
     }
 
-    private void addMarker(LatLng point, String title){
+    private void addMarker(LatLng point, String title) {
         mMap.addMarker(new MarkerOptions()
                 .position(point)
                 .title(title));
     }
 
-    private void setUpMap()
-    {
+    private void setUpMap() {
         mMap.setOnMarkerClickListener(this);
-        addMarker(new LatLng(35.90980520000001,-79.04834340000002),"UNC Student Store");
-        addMarker(new LatLng(35.907284, -79.045378),"Carolina Alumni Memorial");
-        addMarker(new LatLng(35.913092, -79.051660),"Davie Poplar");
-        addMarker(new LatLng(35.913715, -79.044944),"Forest Theatre");
-        addMarker(new LatLng(35.913823, -79.048991),"Coker Arboretum");
-        addMarker(new LatLng(35.908874, -79.049238),"Morehead-Patterson Bell Tower");
-        addMarker(new LatLng(35.912593, -79.050869),"Old East");
-        addMarker(new LatLng(35.912360, -79.051219),"Old Well");
-        addMarker(new LatLng(35.916313, -79.053548),"Playmakers Theater");
+        addMarker(new LatLng(35.90980520000001, -79.04834340000002), "UNC Student Store");
+        addMarker(new LatLng(35.907284, -79.045378), "Carolina Alumni Memorial");
+        addMarker(new LatLng(35.913092, -79.051660), "Davie Poplar");
+        addMarker(new LatLng(35.913715, -79.044944), "Forest Theatre");
+        addMarker(new LatLng(35.913823, -79.048991), "Coker Arboretum");
+        addMarker(new LatLng(35.908874, -79.049238), "Morehead-Patterson Bell Tower");
+        addMarker(new LatLng(35.912593, -79.050869), "Old East");
+        addMarker(new LatLng(35.912360, -79.051219), "Old Well");
+        addMarker(new LatLng(35.916313, -79.053548), "Playmakers Theater");
 
     }
 
-    private static final LatLng UNC = new LatLng(35.90980520000001,-79.04834340000002);
+    private static final LatLng UNC = new LatLng(35.90980520000001, -79.04834340000002);
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -99,17 +100,20 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UNC, 14));
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
+        // Set listener for marker click event.  See the bottom of this class for its behavior.
+        mMap.setOnMarkerClickListener(this);
         enableMyLocation();
 
         setUpMap();
 
-     //   mMap.addMarker(new MarkerOptions().position(new LatLng(35.90980520000001,-79.04834340000002)).title("UNC Student Store"));
+        //   mMap.addMarker(new MarkerOptions().position(new LatLng(35.90980520000001,-79.04834340000002)).title("UNC Student Store"));
     }
 
 
     @Override
     public void onMapClick(LatLng point) {
         mTapTextView.setText("tapped, point=" + point);
+        mSelectedMarker = null;
     }
 
     @Override
@@ -183,12 +187,20 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     @Override
     public boolean onMarkerClick(Marker marker) {
 
-
-        if (marker.equals(UNCStudentStoreM))
-        {
-            mTapTextView.setText("this is unc store");
+        if (marker.equals(mSelectedMarker)) {
+            // The showing info window has already been closed - that's the first thing to happen
+            // when any marker is clicked.
+            // Return true to indicate we have consumed the event and that we do not want the
+            // the default behavior to occur (which is for the camera to move such that the
+            // marker is centered and for the marker's info window to open, if it has one).
+            mSelectedMarker = null;
+            return true;
         }
 
-        return true;
+        mSelectedMarker = marker;
+
+        // Return false to indicate that we have not consumed the event and that we wish
+        // for the default behavior to occur.
+        return false;
     }
 }

@@ -23,11 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton btn_gps;
     private ImageButton btn_tour;
-<<<<<<< Updated upstream
     SQLiteDatabase db = null;
-=======
     private Spinner spinner1;
->>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-<<<<<<< Updated upstream
     public void resetDB(){
         db.execSQL("DROP TABLE IF EXISTS Landmarks");
         db.execSQL("CREATE TABLE IF NOT EXISTS Landmarks (ID TEXT,Name TEXT, Location TEXT, Description TEXT)");
@@ -75,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         db.execSQL("INSERT INTO Landmarks VALUES('ow','Old Well','35.912360, -79.051219','At the heart of campus stands the visual symbol of the University of North Carolina at Chapel Hill. For many years the Old Well served as the sole water supply for Old East and Old West dormitories.')");
         db.execSQL("INSERT INTO Landmarks VALUES('pt','Playmakers Theater','35.916313, -79.053548','The most beautiful building on the Carolina campus, to many tastes, is this Greek Revival temple considered to be one of the masterworks of New York architect Alexander Jackson Davis. He designed the building as an unlikely combination library and ballroom; later it was used for agricultural chemistry and law. For many years, it was the theatre of the Carolina Playmakers, who were largely responsible for developing folk drama in the United States. Instead of the acanthus leaves that usually ornament Corinthian capitals, Davis substituted wheat and Indian corn, in response to the aggressive Americanism then present in the country.')");
            }
-=======
+
     public class ItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         //get strings of first item
@@ -98,5 +94,4 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
->>>>>>> Stashed changes
 }
