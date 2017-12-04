@@ -94,7 +94,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             } else if (marker.equals(dp)) {
                 badge = R.drawable.bell_tower;
             } else if (marker.equals(ft)) {
-                badge = R.drawable.bell_tower;
+                badge = R.drawable.forest_theater;
             } else if (marker.equals(ca)) {
                 badge = R.drawable.bell_tower;
             } else {
@@ -217,7 +217,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 if(title!=null){
 
                 }else{
-
                 }
             }
         });
@@ -249,9 +248,56 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             if (firstItem.equals(String.valueOf(spinner1.getSelectedItem()))) {
                 // ToDo when first item is selected
             } else {
+                String selectedItem = String.valueOf(spinner1.getSelectedItem());
+                System.out.println(selectedItem);
+                if(selectedItem.equals("UNC Student Store")){
+                    uss.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                }
+                if(selectedItem.equals("Carolina Alumni Memorial")){
+                    cam.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Davie Poplar")){
+                    dp.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Forest Theatre")){
+                    ft.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Coker Arboretum")){
+                    ca.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Morehead-Patterson Bell Tower")){
+                    mbt.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Old East")){
+                    oe.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Old Well")){
+                    ow.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
+                if(selectedItem.equals("Playmakers Theater")){
+                    pt.showInfoWindow();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+
+                }
                 Toast.makeText(parent.getContext(),
                         "You have selected : " + parent.getItemAtPosition(pos).toString(),
                         Toast.LENGTH_LONG).show();
+
                 // Todo when item is selected by the user
             }
         }
@@ -262,7 +308,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
 
     }
-
 
     private Marker addMarker(LatLng point, String title) {
         Marker marker=mMap.addMarker(new MarkerOptions()
@@ -386,7 +431,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-
         if (marker.equals(mSelectedMarker)) {
             // The showing info window has already been closed - that's the first thing to happen
             // when any marker is clicked.
@@ -424,6 +468,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 }
             }
         });
+
+        //onDestroy();
         return false;
     }
 }

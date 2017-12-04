@@ -12,10 +12,10 @@
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="28dp"
+        android:layout_toStartOf="@+id/textView2"
         android:layout_weight='1'
         android:contentDescription="Campus Tour"
         android:src="@drawable/gps" />
@@ -24,24 +24,23 @@
         android:id="@+id/textView"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/gps"
         android:layout_below="@+id/gps"
-        android:layout_marginEnd="19dp"
-        android:layout_toStartOf="@+id/textView2"
+        android:layout_marginStart="11dp"
         android:gravity="center"
         android:text="GPS"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <ImageButton
         android:id="@+id/tour"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/gps"
-        android:layout_marginStart="34dp"
-        android:layout_marginTop="18dp"
+        android:layout_above="@+id/textView2"
+        android:layout_marginStart="39dp"
         android:layout_toEndOf="@+id/gps"
-        android:src="@drawable/old_well"
-        android:layout_weight='1'/>
+        android:layout_weight='1'
+        android:src="@drawable/old_well" />
 
     <TextView
         android:id="@+id/textView2"
@@ -51,7 +50,7 @@
         android:layout_below="@+id/gps"
         android:gravity="center"
         android:text="Campus Tour"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
 
 </RelativeLayout>
