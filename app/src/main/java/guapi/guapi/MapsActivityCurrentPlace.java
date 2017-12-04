@@ -13,16 +13,22 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +40,8 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -49,7 +57,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener{
 
     /** Demonstrates customizing the info window and/or its contents. */
     class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -97,12 +105,25 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
             String title = marker.getTitle();
             TextView titleUi = ((TextView) view.findViewById(R.id.title));
+            TextView description = ((TextView)view.findViewById(R.id.description));
 
             if (title != null) {
                 // Spannable string allows us to edit the formatting of the text.
                 SpannableString titleText = new SpannableString(title);
                 titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
                 titleUi.setText(titleText);
+
+                //db.execSQL("SELECT Description FROM Landmarks WHERE Name = '"+ marker.getTitle().toString()+"'");
+                Cursor c = db.rawQuery("SELECT Description FROM Landmarks WHERE Name = '"+ marker.getTitle().toString()+"'", null);
+                c.moveToFirst();
+
+                //System.out.println(c.getString(0));
+                //set description
+                description.setText(c.getString(0));
+                //update description
+                des=c.getString(0);
+
+
             } else {
                 titleUi.setText("");
             }
@@ -159,11 +180,19 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private Marker UNCStudentStoreM;
 
     private String title;
+    SQLiteDatabase db =  null;
+
+    private TextToSpeech tts;
+
+    private String des;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        db =  openOrCreateDatabase("MyDatabase", Context.MODE_PRIVATE, null);
 
         spinner1 = (Spinner) findViewById(R.id.spinner1);
         spinner1.setOnItemSelectedListener(new ItemSelectedListener());
@@ -188,12 +217,28 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 if(title!=null){
 
                 }else{
-                    
+
                 }
             }
         });
     }
 
+    @Override
+    public void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    public void speak(String text){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        }else{
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
 
     public class ItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
@@ -238,6 +283,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         oe=addMarker(new LatLng(35.912593, -79.050869), "Old East");
         ow=addMarker(new LatLng(35.912360, -79.051219), "Old Well");
         pt=addMarker(new LatLng(35.916313, -79.053548), "Playmakers Theater");
+
+
 
     }
 
@@ -358,6 +405,25 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         // Return false to indicate that we have not consumed the event and that we wish
         // for the default behavior to occur.
+
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = tts.setLanguage(Locale.US);
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "This Language is not supported");
+                    }
+                    if(des!=null){
+                        System.out.println(des);
+                        speak(des);
+                    }
+
+                } else {
+                    Log.e("TTS", "Initilization Failed!");
+                }
+            }
+        });
         return false;
     }
 }
