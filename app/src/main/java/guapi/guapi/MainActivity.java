@@ -24,22 +24,18 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton btn_gps;
     private ImageButton btn_tour;
     SQLiteDatabase db = null;
-    private Spinner spinner1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_page);
 
-        spinner1 = (Spinner) findViewById(R.id.spinner);
-        spinner1.setOnItemSelectedListener(new ItemSelectedListener());
-
         btn_gps = findViewById(R.id.gps);
         btn_tour = findViewById(R.id.tour);
 
 
 
-        btn_gps.setOnClickListener(new View.OnClickListener() {
+        btn_tour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Start new activity class
@@ -71,26 +67,5 @@ public class MainActivity extends AppCompatActivity {
         db.execSQL("INSERT INTO Landmarks VALUES('ow','Old Well','35.912360, -79.051219','At the heart of campus stands the visual symbol of the University of North Carolina at Chapel Hill. For many years the Old Well served as the sole water supply for Old East and Old West dormitories.')");
         db.execSQL("INSERT INTO Landmarks VALUES('pt','Playmakers Theater','35.916313, -79.053548','The most beautiful building on the Carolina campus, to many tastes, is this Greek Revival temple considered to be one of the masterworks of New York architect Alexander Jackson Davis. He designed the building as an unlikely combination library and ballroom; later it was used for agricultural chemistry and law. For many years, it was the theatre of the Carolina Playmakers, who were largely responsible for developing folk drama in the United States. Instead of the acanthus leaves that usually ornament Corinthian capitals, Davis substituted wheat and Indian corn, in response to the aggressive Americanism then present in the country.')");
            }
-    public class ItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
-        //get strings of first item
-        String firstItem = String.valueOf(spinner1.getSelectedItem());
-
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            if (firstItem.equals(String.valueOf(spinner1.getSelectedItem()))) {
-                // ToDo when first item is selected
-            } else {
-                Toast.makeText(parent.getContext(),
-                        "You have selected : " + parent.getItemAtPosition(pos).toString(),
-                        Toast.LENGTH_LONG).show();
-                // Todo when item is selected by the user
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> arg) {
-
-        }
-
-    }
 }
