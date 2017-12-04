@@ -118,11 +118,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
                 titleUi.setText(titleText);
 
-                //db.execSQL("SELECT Description FROM Landmarks WHERE Name = '"+ marker.getTitle().toString()+"'");
                 Cursor c = db.rawQuery("SELECT Description FROM Landmarks WHERE Name = '"+ marker.getTitle().toString()+"'", null);
                 c.moveToFirst();
-
-                //System.out.println(c.getString(0));
                 //set description
                 description.setText(c.getString(0));
                 //update description
@@ -176,13 +173,10 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private Marker ow;
     private Marker pt;
 
-    private RadioGroup mOptions;
     private Marker mLastSelectedMarker;
 
 
     private TextView mCameraTextView;
-
-    private Marker UNCStudentStoreM;
 
     private String title;
     SQLiteDatabase db =  null;
@@ -190,17 +184,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private TextToSpeech tts;
 
     private String des;
-
-    private LocationManager mLocationManager;
-
-    private LatLng currentLocation;
-
-
-//    // The minimum distance to change Updates in meters
-//    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
-//
-//    // The minimum time between updates in milliseconds
-//    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
 
 
     @Override
@@ -223,13 +206,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-//
-//            ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},1 );
-//        }
-//        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, (android.location.LocationListener) mLocationListener);
-
         Button button= (Button)findViewById(R.id.btn);
         button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -241,7 +217,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                     myIntent.putExtra("Title",title);
                     //get marker's location
                     myIntent.putExtra("LocationBundle",getLocationByTitle(title));
-                    System.out.println("HAHAHAHAHAHAH"+getLocationByTitle(title));
+
+                    //start the intent
                     startActivity(myIntent);
                 }else{
                 }
@@ -255,22 +232,10 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         Cursor c = db.rawQuery("SELECT LocationX,LocationY FROM Landmarks WHERE Name = '"+ title +"'", null);
         c.moveToFirst();
         Double x = c.getDouble(0);
-        //.moveToNext();
         Double y = c.getDouble(1);
-        System.out.println(y);
-        //locations.putParcelable("from_position",currentLocation);
         locations.putParcelable("to_position",new LatLng(x,y));
-        System.out.println(locations);
         return locations;
     }
-
-//    private final LocationListener mLocationListener = new LocationListener() {
-//        @Override
-//        public void onLocationChanged(final Location location) {
-//            currentLocation=new LatLng(location.getLatitude(),location.getLatitude());
-//        }
-//    };
-
 
 
     @Override
@@ -300,7 +265,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 // ToDo when first item is selected
             } else {
                 String selectedItem = String.valueOf(spinner1.getSelectedItem());
-                System.out.println(selectedItem);
                 if(selectedItem.equals("UNC Student Store")){
                     uss.showInfoWindow();
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
@@ -519,7 +483,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         });
 
-        //onDestroy();
         return false;
     }
 }

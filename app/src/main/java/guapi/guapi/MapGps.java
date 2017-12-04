@@ -47,7 +47,7 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
     private String markerTitle;
 
 
-    private static final LatLng UNC = new LatLng(35.90980520000001, -79.04834340000002);
+    //private static final LatLng UNC = new LatLng(35.90980520000001, -79.04834340000002);
 
 
     @Override
@@ -62,12 +62,8 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
         markerTitle = getIntent().getStringExtra("Title");
         Bundle bundle = getIntent().getParcelableExtra("LocationBundle");
         toPosition = bundle.getParcelable("to_position");
-        if(markerPoints!=null) {
-            markerPoints.clear();
-        }
-        if(mMap!=null){
-        mMap.clear();
-        }
+        if(markerPoints!=null) {markerPoints.clear();}
+        if(mMap!=null){mMap.clear();}
         updateLocation();
     }
 
@@ -89,7 +85,6 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
         fromPosition = new LatLng(latitude,longitude);
-        //System.out.println(longitude + "   haohoho    " + latitude);
     }
 
     @Override
@@ -120,7 +115,7 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
                     // Start downloading json data from Google Directions API
                     downloadTask.execute(url);
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(16), 250, null);
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(18), 250, null);
                 }
     }
 
@@ -180,7 +175,6 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList points = null;
             PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
 
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList();
