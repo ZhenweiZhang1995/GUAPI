@@ -42,9 +42,13 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
     double longitude;
     double latitude;
+    private LatLng fromPosition;
+    private LatLng toPosition;
+    private String markerTitle;
 
 
     private static final LatLng UNC = new LatLng(35.90980520000001, -79.04834340000002);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,16 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        markerTitle = getIntent().getStringExtra("Title");
+        Bundle bundle = getIntent().getParcelableExtra("LocationBundle");
+        toPosition = bundle.getParcelable("to_position");
+        if(markerPoints!=null) {
+            markerPoints.clear();
+        }
+        if(mMap!=null){
+        mMap.clear();
+        }
         updateLocation();
     }
 
@@ -74,44 +88,25 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
         longitude = location.getLongitude();
         latitude = location.getLatitude();
-        System.out.println(longitude +  "   haohoho    "+  latitude);
+        fromPosition = new LatLng(latitude,longitude);
+        //System.out.println(longitude + "   haohoho    " + latitude);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(UNC, 14));
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-
-                if (markerPoints.size() > 1) {
-                    markerPoints.clear();
-                    mMap.clear();
-//                    updateLocation();
-//                    LatLng mycurrent = new LatLng(latitude, longitude);
-//                    markerPoints.add(mycurrent);
-                }
+        //LatLng sydney = new LatLng(-34, 151);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(fromPosition, 14));
 
                 // Adding new item to the ArrayList
-                markerPoints.add(latLng);
-
-                // Creating MarkerOptions
-                MarkerOptions options = new MarkerOptions();
+                markerPoints.add(fromPosition);
+                mMap.addMarker(new MarkerOptions().position(fromPosition).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
                 // Setting the position of the marker
-                options.position(latLng);
-
-                if (markerPoints.size() == 1) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                } else if (markerPoints.size() == 2) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                }
+                markerPoints.add(toPosition);
 
                 // Add new marker to the Google Map Android API V2
-                mMap.addMarker(options);
+                mMap.addMarker(new MarkerOptions().position(toPosition).title(markerTitle).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
                 // Checks, whether start and end locations are captured
                 if (markerPoints.size() >= 2) {
@@ -125,15 +120,12 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
                     // Start downloading json data from Google Directions API
                     downloadTask.execute(url);
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(16), 250, null);
                 }
-
-            }
-        });
-
     }
 
 
-    private class DownloadTask extends AsyncTask<String, Void, String> {
+        private class DownloadTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... url) {
@@ -208,7 +200,7 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
                 lineOptions.addAll(points);
                 lineOptions.width(12);
-                lineOptions.color(Color.RED);
+                lineOptions.color(Color.BLUE);
                 lineOptions.geodesic(true);
 
             }
