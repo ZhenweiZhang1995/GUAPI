@@ -13,7 +13,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,6 +23,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -41,6 +44,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -220,6 +224,13 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 }
             }
         });
+
+        findViewById(R.id.voice).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listen();
+            }
+        });
     }
 
     @Override
@@ -239,6 +250,70 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+    private void listen(){
+        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        i.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say something");
+
+        try {
+            startActivityForResult(i, 100);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(this, "Your device doesn't support Speech Recognition", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100){
+            if (resultCode == RESULT_OK && null != data) {
+                ArrayList<String> res = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                String inSpeech = res.get(0);
+                recognition(inSpeech);
+            }
+        }
+    }
+
+    public void recognition(String text){
+        Log.e("Speech",""+text);
+
+        if(text.equalsIgnoreCase("UNC Student Store")){
+            moveMarker(uss);
+        }
+        if(text.equalsIgnoreCase("Carolina Alumni Memorial")){
+            moveMarker(cam);
+
+        }
+        if(text.equalsIgnoreCase("Davie Poplar")){
+            moveMarker(dp);
+
+        }
+        if(text.equalsIgnoreCase("Forest Theatre")){
+            moveMarker(ft);
+
+        }
+        if(text.equalsIgnoreCase("Coker Arboretum")){
+            moveMarker(ca);
+
+        }
+        if(text.equalsIgnoreCase("Morehead-Patterson Bell Tower")){
+            moveMarker(mbt);
+
+        }
+        if(text.equalsIgnoreCase("Old East")){
+            moveMarker(oe);
+
+        }
+        if(text.equalsIgnoreCase("Old Well")){
+            moveMarker(ow);
+
+        }
+        if(text.equalsIgnoreCase("Playmakers Theater")){
+            moveMarker(pt);
+        }
+    }
+
     public class ItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         //get strings of first item
@@ -251,48 +326,38 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 String selectedItem = String.valueOf(spinner1.getSelectedItem());
                 System.out.println(selectedItem);
                 if(selectedItem.equals("UNC Student Store")){
-                    uss.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(uss);
                 }
                 if(selectedItem.equals("Carolina Alumni Memorial")){
-                    cam.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(cam);
 
                 }
                 if(selectedItem.equals("Davie Poplar")){
-                    dp.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(dp);
 
                 }
                 if(selectedItem.equals("Forest Theatre")){
-                    ft.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(ft);
 
                 }
                 if(selectedItem.equals("Coker Arboretum")){
-                    ca.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(ca);
 
                 }
                 if(selectedItem.equals("Morehead-Patterson Bell Tower")){
-                    mbt.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(mbt);
 
                 }
                 if(selectedItem.equals("Old East")){
-                    oe.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(oe);
 
                 }
                 if(selectedItem.equals("Old Well")){
-                    ow.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
+                    moveMarker(ow);
 
                 }
                 if(selectedItem.equals("Playmakers Theater")){
-                    pt.showInfoWindow();
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(uss.getPosition()), 250, null);
-
+                    moveMarker(pt);
                 }
                 Toast.makeText(parent.getContext(),
                         "You have selected : " + parent.getItemAtPosition(pos).toString(),
@@ -302,11 +367,23 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         }
 
+
         @Override
         public void onNothingSelected(AdapterView<?> arg) {
 
         }
 
+    }
+
+    public void moveMarker(Marker marker){
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 250, null);
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 250, null);
+        marker.showInfoWindow();
+
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
     }
 
     private Marker addMarker(LatLng point, String title) {
@@ -350,7 +427,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         setUpMap();
 
-        //   mMap.addMarker(new MarkerOptions().position(new LatLng(35.90980520000001,-79.04834340000002)).title("UNC Student Store"));
     }
 
 
@@ -431,6 +507,13 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+
+
         if (marker.equals(mSelectedMarker)) {
             // The showing info window has already been closed - that's the first thing to happen
             // when any marker is clicked.
@@ -448,6 +531,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         Toast.makeText(this, marker.getTitle().toString(), Toast.LENGTH_SHORT).show();
 
         // Return false to indicate that we have not consumed the event and that we wish
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 500, null);
         // for the default behavior to occur.
 
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -468,6 +552,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 }
             }
         });
+
 
         //onDestroy();
         return false;
