@@ -14,11 +14,6 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tap_text"
-            android:text="tap text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <Spinner
             android:id="@+id/spinner1"
@@ -30,8 +25,14 @@
             android:backgroundTint="#d11f08"
             android:entries="@array/places_array" />
 
-
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="450dp"
+        android:text="Button" />
 
 
 </FrameLayout>
