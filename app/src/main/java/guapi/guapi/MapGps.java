@@ -89,7 +89,7 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
         fromPosition = new LatLng(latitude,longitude);
-        System.out.println(longitude + "   haohoho    " + latitude);
+        //System.out.println(longitude + "   haohoho    " + latitude);
     }
 
     @Override
@@ -100,22 +100,13 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
                 // Adding new item to the ArrayList
                 markerPoints.add(fromPosition);
-                mMap.addMarker(new MarkerOptions().position(fromPosition).title("Current Location"));
+                mMap.addMarker(new MarkerOptions().position(fromPosition).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
 
                 // Setting the position of the marker
                 markerPoints.add(toPosition);
 
-
-//                System.out.println("CurrentPosition"+fromPosition);
-//                System.out.println("ToPosition"+toPosition);
-
-//                if (markerPoints.size() == 1) {
-//                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                } else if (markerPoints.size() == 2) {
-//                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//                }
                 // Add new marker to the Google Map Android API V2
-                mMap.addMarker(new MarkerOptions().position(toPosition).title(markerTitle));
+                mMap.addMarker(new MarkerOptions().position(toPosition).title(markerTitle).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
                 // Checks, whether start and end locations are captured
                 if (markerPoints.size() >= 2) {
@@ -209,7 +200,7 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
 
                 lineOptions.addAll(points);
                 lineOptions.width(12);
-                lineOptions.color(Color.RED);
+                lineOptions.color(Color.BLUE);
                 lineOptions.geodesic(true);
 
             }
