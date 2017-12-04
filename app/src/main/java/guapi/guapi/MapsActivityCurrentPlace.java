@@ -2,6 +2,8 @@ package guapi.guapi;
 
 
 
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
@@ -13,12 +15,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -186,6 +191,17 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private String des;
 
+    private LocationManager mLocationManager;
+
+    private LatLng currentLocation;
+
+
+//    // The minimum distance to change Updates in meters
+//    private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+//
+//    // The minimum time between updates in milliseconds
+//    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +223,12 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        popUpWindow = new PopupWindow(this);
+//        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+//
+//            ActivityCompat.requestPermissions(this,new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},1 );
+//        }
+//        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, (android.location.LocationListener) mLocationListener);
 
         Button button= (Button)findViewById(R.id.btn);
         button.setOnClickListener(new View.OnClickListener(){
@@ -215,12 +236,42 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             public void onClick(View v) {
                // add method
                 if(title!=null){
+                    Intent myIntent = new Intent(MapsActivityCurrentPlace.this,MapGps.class);
 
+                    myIntent.putExtra("Title",title);
+                    //get marker's location
+                    myIntent.putExtra("LocationBundle",getLocationByTitle(title));
+                    System.out.println("HAHAHAHAHAHAH"+getLocationByTitle(title));
+                    startActivity(myIntent);
                 }else{
                 }
             }
         });
     }
+
+    private Bundle getLocationByTitle(String title){
+
+        Bundle locations = new Bundle();
+        Cursor c = db.rawQuery("SELECT LocationX,LocationY FROM Landmarks WHERE Name = '"+ title +"'", null);
+        c.moveToFirst();
+        Double x = c.getDouble(0);
+        //.moveToNext();
+        Double y = c.getDouble(1);
+        System.out.println(y);
+        //locations.putParcelable("from_position",currentLocation);
+        locations.putParcelable("to_position",new LatLng(x,y));
+        System.out.println(locations);
+        return locations;
+    }
+
+//    private final LocationListener mLocationListener = new LocationListener() {
+//        @Override
+//        public void onLocationChanged(final Location location) {
+//            currentLocation=new LatLng(location.getLatitude(),location.getLatitude());
+//        }
+//    };
+
+
 
     @Override
     public void onDestroy() {
@@ -352,7 +403,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         //   mMap.addMarker(new MarkerOptions().position(new LatLng(35.90980520000001,-79.04834340000002)).title("UNC Student Store"));
     }
-
 
     @Override
     public void onMapClick(LatLng point) {
