@@ -33,7 +33,14 @@ public class MainActivity extends AppCompatActivity {
         btn_gps = findViewById(R.id.gps);
         btn_tour = findViewById(R.id.tour);
 
-
+        btn_gps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Start new activity class
+                Intent myIntent = new Intent(MainActivity.this,MapGps.class);
+                startActivity(myIntent);
+            }
+        });
 
         btn_tour.setOnClickListener(new View.OnClickListener() {
             @Override
