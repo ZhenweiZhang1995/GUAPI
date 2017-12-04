@@ -33,4 +33,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.4.0'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:26.+'
+    compile 'com.google.maps:google-maps-services:0.1.20'
+    compile 'com.github.ar-android:DrawRouteMaps:1.0.0'
+    compile 'com.appolica:interactive-info-window:v1.0.6'
 }

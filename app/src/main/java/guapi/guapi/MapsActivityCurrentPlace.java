@@ -23,8 +23,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -69,6 +73,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         public View getInfoContents(Marker marker) {
             render(marker, mContents);
             return mContents;
+
         }
 
         private void render(Marker marker, View view) {
@@ -92,6 +97,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
             String title = marker.getTitle();
             TextView titleUi = ((TextView) view.findViewById(R.id.title));
+
             if (title != null) {
                 // Spannable string allows us to edit the formatting of the text.
                 SpannableString titleText = new SpannableString(title);
@@ -100,6 +106,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             } else {
                 titleUi.setText("");
             }
+
 
             String snippet = marker.getSnippet();
             TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
@@ -131,6 +138,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private TextView mTapTextView;
     private Marker mSelectedMarker;
     private Spinner spinner1;
+    private PopupWindow popUpWindow;
 
     private Marker uss;
     private Marker cam;
@@ -150,6 +158,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private Marker UNCStudentStoreM;
 
+    private String title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,7 +168,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         spinner1 = (Spinner) findViewById(R.id.spinner1);
         spinner1.setOnItemSelectedListener(new ItemSelectedListener());
 
-        mTapTextView = (TextView) findViewById(R.id.tap_text);
 
         if (mLastSelectedMarker != null && mLastSelectedMarker.isInfoWindowShown()) {
             // Refresh the info window when the info window's content has changed.
@@ -168,6 +177,21 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        popUpWindow = new PopupWindow(this);
+
+        Button button= (Button)findViewById(R.id.btn);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+               // add method
+                if(title!=null){
+
+                }else{
+                    
+                }
+            }
+        });
     }
 
 
@@ -311,6 +335,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
+    boolean isClicked = true;
 
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -326,6 +351,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
 
         mSelectedMarker = marker;
+
+        title=marker.getTitle();
 
         Toast.makeText(this, marker.getTitle().toString(), Toast.LENGTH_SHORT).show();
 

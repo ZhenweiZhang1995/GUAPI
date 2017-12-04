@@ -49,5 +49,6 @@
             android:singleLine="true"
             android:textColor="#ff7f7f7f"
             android:textSize="14dp" />
+
     </LinearLayout>
 </LinearLayout>
