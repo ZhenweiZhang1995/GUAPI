@@ -17,11 +17,16 @@ import android.util.Log;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.StreetViewPanoramaLocation;
 
 import org.json.JSONObject;
 
@@ -35,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapGps extends FragmentActivity implements OnMapReadyCallback {
+public class MapGps extends FragmentActivity implements OnMapReadyCallback,StreetViewPanorama.OnStreetViewPanoramaChangeListener {
 
     private GoogleMap mMap;
     ArrayList markerPoints = new ArrayList();
@@ -46,14 +51,18 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
     private LatLng toPosition;
     private String markerTitle;
 
+    private StreetViewPanorama mStreetViewPanorama;
+    private Marker mMarker;
+    private static final String MARKER_POSITION_KEY = "MarkerPosition";
 
-    //private static final LatLng UNC = new LatLng(35.90980520000001, -79.04834340000002);
+
+    private static final LatLng UNC = new LatLng(35.90980520000001, -79.04834340000002);
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.map_gps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -65,6 +74,24 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
         if(markerPoints!=null) {markerPoints.clear();}
         if(mMap!=null){mMap.clear();}
         updateLocation();
+
+        SupportStreetViewPanoramaFragment streetViewPanoramaFragment =
+                (SupportStreetViewPanoramaFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.streetviewpanorama);
+        streetViewPanoramaFragment.getStreetViewPanoramaAsync(
+                new OnStreetViewPanoramaReadyCallback() {
+                    @Override
+                    public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
+                        mStreetViewPanorama = panorama;
+                        mStreetViewPanorama.setOnStreetViewPanoramaChangeListener(
+                                MapGps.this);
+                        // Only need to set the position once as the streetview fragment will maintain
+                        // its state.
+                        if (savedInstanceState == null) {
+                            mStreetViewPanorama.setPosition(toPosition);
+                        }
+                    }
+                });
     }
 
 
@@ -264,5 +291,16 @@ public class MapGps extends FragmentActivity implements OnMapReadyCallback {
             urlConnection.disconnect();
         }
         return data;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(MARKER_POSITION_KEY, mMarker.getPosition());
+    }
+
+    @Override
+    public void onStreetViewPanoramaChange(StreetViewPanoramaLocation location) {
+
     }
 }
