@@ -13,6 +13,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
@@ -23,6 +24,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -33,6 +38,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -65,7 +71,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener{
+        GoogleMap.OnMarkerClickListener,
+        SensorEventListener {
 
     /** Demonstrates customizing the info window and/or its contents. */
     class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -155,6 +162,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+
     /**
      * Request code for location permission request.
      *
@@ -200,6 +208,11 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private Bundle markerBundle;
 
     private Button svBtn;
+
+    float light_value = 0;
+    SensorManager sm = null;
+    Sensor light = null;
+    private MapStyleOptions style;
 
 
     @Override
@@ -257,7 +270,36 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         svBtn = (Button)findViewById(R.id.streetview);
         svBtn.setEnabled(false);
 
+
+        // light sensor
+        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+        light = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        sm.registerListener(this, light, 100000);
+
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        light_value = sensorEvent.values[0];
+        if(light_value < -3 ){
+            style = MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_night);
+            mMap.setMapStyle(style);
+        }else{
+            style = MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_default);
+            mMap.setMapStyle(style);
+        }
+
+        Log.e("Value","Value is " + light_value);
+
+    }
+
+
 
     private Bundle getLocationByTitle(String title){
 
