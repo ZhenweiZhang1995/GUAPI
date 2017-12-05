@@ -197,6 +197,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private String des;
 
+    private Bundle markerBundle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -317,6 +319,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     public void recognition(String text){
         Log.e("Speech",""+text);
+        //update marker title
+        title = text;
 
         if(text.equalsIgnoreCase("UNC Student Store")){
             moveMarker(uss);
@@ -364,6 +368,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 // ToDo when first item is selected
             } else {
                 String selectedItem = String.valueOf(spinner1.getSelectedItem());
+                //update title
+                title = selectedItem;
                 if(selectedItem.equals("UNC Student Store")){
                     moveMarker(uss);
                 }
