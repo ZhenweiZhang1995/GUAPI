@@ -96,16 +96,24 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             int badge;
             // Use the equals() method on a Marker to check for equals.  Do not use ==.
             if (marker.equals(uss)) {
-                badge = R.drawable.bell_tower;
+                badge = R.drawable.student_store;
             } else if (marker.equals(cam)) {
-                badge = R.drawable.bell_tower;
+                badge = R.drawable.memorial;
             } else if (marker.equals(dp)) {
-                badge = R.drawable.bell_tower;
+                badge = R.drawable.davie;
             } else if (marker.equals(ft)) {
                 badge = R.drawable.forest_theater;
             } else if (marker.equals(ca)) {
+                badge = R.drawable.coker;
+            } else if (marker.equals(pt)){
+                badge = R.drawable.playmakers;
+            } else if (marker.equals(mbt)){
                 badge = R.drawable.bell_tower;
-            } else {
+            } else if (marker.equals(oe)){
+                badge = R.drawable.old_east;
+            } else if (marker.equals(ow)){
+                badge = R.drawable.old_well;
+            } else{
                 // Passing 0 to setImageResource will clear the image view.
                 badge = 0;
             }
@@ -477,7 +485,9 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         // Setting an info window adapter allows us to change the both the contents and look of the
         // info window.
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
+        mMap.setOnMapClickListener(this);
         enableMyLocation();
+
 
         setUpMap();
 
@@ -485,8 +495,18 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     @Override
     public void onMapClick(LatLng point) {
-        mTapTextView.setText("tapped, point=" + point);
+        //mTapTextView.setText("tapped, point=" + point);
+
         mSelectedMarker = null;
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+
+        if (tts2 != null) {
+            tts2.stop();
+            tts2.shutdown();
+        }
     }
 
     @Override
