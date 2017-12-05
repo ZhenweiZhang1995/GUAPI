@@ -235,6 +235,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                     //start the intent
                     startActivity(myIntent);
                 }else{
+                    Toast.makeText(MapsActivityCurrentPlace.this, "You need to select a marker first", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -321,6 +322,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         Log.e("Speech",""+text);
         //update marker title
         title = text;
+
+        Toast.makeText(this, "You said:\n" + text, Toast.LENGTH_LONG).show();
 
         if(text.equalsIgnoreCase("UNC Student Store")){
             moveMarker(uss);

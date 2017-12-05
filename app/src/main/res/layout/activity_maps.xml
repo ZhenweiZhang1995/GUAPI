@@ -22,6 +22,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/textView"
             android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:backgroundTint="#d11f08"
             android:entries="@array/places_array" />
 
@@ -31,15 +32,16 @@
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="Button" />
+        android:layout_marginTop="50dp"
+        android:background = "@drawable/roundedbutton"
+        android:text="Navigate" />
 
     <Button
         android:id="@+id/voice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:background = "@drawable/roundedbutton"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/roundedbutton"
         android:text="Voice" />
 
 
