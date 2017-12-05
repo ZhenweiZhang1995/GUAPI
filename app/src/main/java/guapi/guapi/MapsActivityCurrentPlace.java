@@ -199,6 +199,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private Bundle markerBundle;
 
+    private Button svBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -247,7 +249,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         });
 
-
+        svBtn = (Button)findViewById(R.id.streetview);
+        svBtn.setEnabled(false);
 
     }
 
@@ -516,6 +519,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             tts2.stop();
             tts2.shutdown();
         }
+
+        svBtn.setEnabled(false);
     }
 
     @Override
@@ -635,6 +640,18 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         });
 
+        svBtn.setEnabled(true);
+
+        svBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(MapsActivityCurrentPlace.this, MapPanorama.class);
+                myIntent.putExtra("Marker", title);
+                startActivity(myIntent);
+            }
+        });
+
         return false;
     }
+
 }

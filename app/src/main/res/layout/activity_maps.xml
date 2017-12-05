@@ -44,5 +44,13 @@
         android:background="@drawable/roundedbutton"
         android:text="Voice" />
 
+    <Button
+        android:id="@+id/streetview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/roundedbutton"
+        android:text="StreetView" />
+
 
 </FrameLayout>
