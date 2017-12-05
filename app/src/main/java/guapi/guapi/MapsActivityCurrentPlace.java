@@ -185,6 +185,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     SQLiteDatabase db =  null;
 
     private TextToSpeech tts;
+    private TextToSpeech tts2;
 
     private String des;
 
@@ -234,6 +235,9 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 listen();
             }
         });
+
+
+
     }
 
     private Bundle getLocationByTitle(String title){
@@ -254,6 +258,11 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             tts.stop();
             tts.shutdown();
         }
+
+        if (tts2 != null) {
+            tts2.stop();
+            tts2.shutdown();
+        }
         super.onDestroy();
     }
 
@@ -262,6 +271,14 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
         }else{
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
+
+    public void speak2(String text){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            tts2.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        }else{
+            tts2.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
 
@@ -398,6 +415,29 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             tts.stop();
             tts.shutdown();
         }
+
+        if (tts2 != null) {
+            tts2.stop();
+            tts2.shutdown();
+        }
+
+        tts2 = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = tts2.setLanguage(Locale.US);
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "This Language is not supported");
+                    }
+                    speak2(des);
+
+                } else {
+                    Log.e("TTS", "Initilization Failed!");
+                }
+            }
+        });
+
+
     }
 
     private Marker addMarker(LatLng point, String title) {
@@ -566,11 +606,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         });
 
-<<<<<<< HEAD
-=======
-
-        //onDestroy();
->>>>>>> da8db63735b6618e9620c82f718c86c3bc41d1c7
         return false;
     }
 }
