@@ -226,6 +226,11 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+
+                if (tts != null) {
+                    tts.stop();
+                    tts.shutdown();
+                }
                // add method
                 if(title!=null){
                     Intent myIntent = new Intent(MapsActivityCurrentPlace.this,MapGps.class);
@@ -331,36 +336,86 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         if(text.equalsIgnoreCase("UNC Student Store")){
             moveMarker(uss);
         }
+        if(text.equalsIgnoreCase("Go to UNC Student Store")){
+            navigateTo("UNC Student Store");
+        }
+
         if(text.equalsIgnoreCase("Carolina Alumni Memorial")){
             moveMarker(cam);
-
         }
+        if(text.equalsIgnoreCase("Go to Carolina Alumni Memorial")){
+            navigateTo("Carolina Alumni Memorial");
+        }
+
         if(text.equalsIgnoreCase("Davie Poplar")){
             moveMarker(dp);
-
         }
+        if(text.equalsIgnoreCase("Go to Davie Poplar")){
+            navigateTo("Davie Poplar");
+        }
+
         if(text.equalsIgnoreCase("Forest Theatre")){
             moveMarker(ft);
-
         }
+        if(text.equalsIgnoreCase("Go to Forest Theatre")){
+            navigateTo("Forest Theatre");
+        }
+
         if(text.equalsIgnoreCase("Coker Arboretum")){
             moveMarker(ca);
-
         }
-        if(text.equalsIgnoreCase("Morehead-Patterson Bell Tower")){
+        if(text.equalsIgnoreCase("Go to Coker Arboretum")){
+            navigateTo("Coker Arboretum");
+        }
+
+        if(text.equalsIgnoreCase("Bell Tower")){
             moveMarker(mbt);
-
         }
+        if(text.equalsIgnoreCase("Go to Bell Tower")){
+            navigateTo("Bell Tower");
+        }
+
         if(text.equalsIgnoreCase("Old East")){
             moveMarker(oe);
-
         }
+        if(text.equalsIgnoreCase("Go to Old East")){
+            navigateTo("Old East");
+        }
+
         if(text.equalsIgnoreCase("Old Well")){
             moveMarker(ow);
-
         }
+        if(text.equalsIgnoreCase("Go to Old Well")){
+            navigateTo("Old Well");
+        }
+
         if(text.equalsIgnoreCase("Playmakers Theater")){
             moveMarker(pt);
+        }
+        if(text.equalsIgnoreCase("Go to Playmakers Theater")){
+            navigateTo("Playmakers Theater");
+        }
+    }
+
+    public void navigateTo(String text) {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+
+        title = text;
+        // add method
+        if(title!=null){
+            Intent myIntent = new Intent(MapsActivityCurrentPlace.this,MapGps.class);
+
+            myIntent.putExtra("Title",title);
+            //get marker's location
+            myIntent.putExtra("LocationBundle",getLocationByTitle(title));
+
+            //start the intent
+            startActivity(myIntent);
+        }else{
+            Toast.makeText(MapsActivityCurrentPlace.this, "You need to select a marker first", Toast.LENGTH_SHORT).show();
         }
     }
 
