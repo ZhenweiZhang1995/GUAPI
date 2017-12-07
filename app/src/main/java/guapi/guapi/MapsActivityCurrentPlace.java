@@ -224,13 +224,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-<<<<<<< HEAD
         Button button= findViewById(R.id.btn);
-=======
-
-        // method for "Navigate" button, pass intent to MapGps.java
-        Button button= (Button)findViewById(R.id.btn);
->>>>>>> refs/remotes/origin/master
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
