@@ -94,7 +94,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
         private void render(Marker marker, View view) {
             int badge;
-            // Use the equals() method on a Marker to check for equals.  Do not use ==.
             if (marker.equals(uss)) {
                 badge = R.drawable.student_store;
             } else if (marker.equals(cam)) {
@@ -143,7 +142,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
 
             String snippet = marker.getSnippet();
-            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
+            TextView snippetUi = view.findViewById(R.id.snippet);
             if (snippet != null && snippet.length() > 12) {
                 SpannableString snippetText = new SpannableString(snippet);
                 snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
@@ -169,10 +168,9 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     private boolean mPermissionDenied = false;
 
     private GoogleMap mMap;
-    private TextView mTapTextView;
     private Marker mSelectedMarker;
     private Spinner spinner1;
-    private PopupWindow popUpWindow;
+
 
     private Marker uss;
     private Marker cam;
@@ -197,8 +195,6 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private String des;
 
-    private Bundle markerBundle;
-
     private Button svBtn;
 
 
@@ -222,7 +218,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Button button= (Button)findViewById(R.id.btn);
+        Button button= findViewById(R.id.btn);
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -254,7 +250,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
             }
         });
 
-        svBtn = (Button)findViewById(R.id.streetview);
+        svBtn = findViewById(R.id.streetview);
         svBtn.setEnabled(false);
 
     }
@@ -580,7 +576,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     @Override
     public void onMapLongClick(LatLng point) {
-        mTapTextView.setText("long pressed, point=" + point);
+        //mTapTextView.setText("long pressed, point=" + point);
     }
 
     /**
