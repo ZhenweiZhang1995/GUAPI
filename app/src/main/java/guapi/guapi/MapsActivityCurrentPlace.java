@@ -1,7 +1,5 @@
 package guapi.guapi;
 
-
-
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,6 +11,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
@@ -23,6 +22,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -33,6 +36,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -51,12 +55,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-/**
- * This demo shows how GMS Location can be used to check for changes to the users location.  The
- * "My Location" button uses GMS Location to set the blue dot representing the users location.
- * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
- * time. If the permission has not been granted, the Activity is finished with an error message.
- */
 public class MapsActivityCurrentPlace extends AppCompatActivity
         implements
         OnMyLocationButtonClickListener,
@@ -65,13 +63,11 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         ActivityCompat.OnRequestPermissionsResultCallback,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener{
+        GoogleMap.OnMarkerClickListener,
+        SensorEventListener {
 
-    /** Demonstrates customizing the info window and/or its contents. */
     class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
-        // These are both viewgroups containing an ImageView with id "badge" and two TextViews with id
-        // "title" and "snippet".
         private final View mWindow;
         private final View mContents;
 
@@ -154,6 +150,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+
     /**
      * Request code for location permission request.
      *
@@ -197,18 +194,27 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     private Button svBtn;
 
+    float light_value = 0;
+    SensorManager sm = null;
+    Sensor light = null;
+    private MapStyleOptions style;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // create database
         db =  openOrCreateDatabase("MyDatabase", Context.MODE_PRIVATE, null);
+        resetDB();
 
+        // initialize dropdown box
         spinner1 = (Spinner) findViewById(R.id.spinner1);
         spinner1.setOnItemSelectedListener(new ItemSelectedListener());
 
 
+        // initialize map
         if (mLastSelectedMarker != null && mLastSelectedMarker.isInfoWindowShown()) {
             // Refresh the info window when the info window's content has changed.
             mLastSelectedMarker.showInfoWindow();
@@ -218,7 +224,13 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+<<<<<<< HEAD
         Button button= findViewById(R.id.btn);
+=======
+
+        // method for "Navigate" button, pass intent to MapGps.java
+        Button button= (Button)findViewById(R.id.btn);
+>>>>>>> refs/remotes/origin/master
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -253,7 +265,36 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         svBtn = findViewById(R.id.streetview);
         svBtn.setEnabled(false);
 
+
+        // light sensor
+        sm = (SensorManager) getSystemService(SENSOR_SERVICE);
+        light = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        sm.registerListener(this, light, 100000);
+
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        light_value = sensorEvent.values[0];
+        if(light_value < -3 ){
+            style = MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_night);
+            mMap.setMapStyle(style);
+        }else{
+            style = MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_default);
+            mMap.setMapStyle(style);
+        }
+
+        Log.e("Value","Light sensor value is " + light_value);
+
+    }
+
+
 
     private Bundle getLocationByTitle(String title){
 
@@ -267,6 +308,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
     }
 
 
+    // Stop speaking when exit
     @Override
     public void onDestroy() {
         if (tts != null) {
@@ -310,6 +352,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+
+    // Get user input from voice input
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -322,6 +366,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+
+    // voice recognition method to match various user input
     public void recognition(String text){
         Log.e("Speech",""+text);
         //update marker title
@@ -393,6 +439,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+    // voice recognition help method for navigation
     public void navigateTo(String text) {
         if (tts != null) {
             tts.stop();
@@ -415,6 +462,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         }
     }
 
+    // Dropdown box listener
     public class ItemSelectedListener implements AdapterView.OnItemSelectedListener {
 
         //get strings of first item
@@ -477,6 +525,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     }
 
+    // Switch marker and show info window without actually click on it
     public void moveMarker(Marker marker){
         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 250, null);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 250, null);
@@ -511,6 +560,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     }
 
+    // Add marker into google map
     private Marker addMarker(LatLng point, String title) {
         Marker marker=mMap.addMarker(new MarkerOptions()
                 .position(point)
@@ -519,6 +569,7 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         return marker;
     }
 
+    // Create marker
     private void setUpMap() {
         mMap.setOnMarkerClickListener(this);
         uss=addMarker(new LatLng(35.90980520000001, -79.04834340000002), "UNC Student Store");
@@ -643,6 +694,8 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
 
     boolean isClicked = true;
 
+
+
     @Override
     public boolean onMarkerClick(Marker marker) {
 
@@ -703,6 +756,25 @@ public class MapsActivityCurrentPlace extends AppCompatActivity
         });
 
         return false;
+    }
+
+    // initialize database
+    public void resetDB(){
+        db.execSQL("DROP TABLE IF EXISTS Landmarks");
+        db.execSQL("CREATE TABLE IF NOT EXISTS Landmarks (ID TEXT,Name TEXT, LocationX DOUBLE, LocationY DOUBLE, Description TEXT)");
+        db.execSQL("INSERT INTO Landmarks VALUES('cam','Carolina Alumni Memorial',35.907284, -79.045378,'The Carolina Alumni Memorial in Memory of Those Lost in Military Service, on Cameron Avenue between Phillips and Memorial halls, was dedicated in April 2007. The names of 684 known alumni who perished are listed in the memorial’s bronze Book of Names with pull-out panels.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('dp','Davie Poplar',35.913092, -79.051660,'This large tree marks the spot where, as legend has it, Revolutionary War General William R. Davie selected the site for the University. Actually, a six-man committee from the University’s first governing board chose the site on December 3, 1792.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('ft','Forest Theatre',35.913715, -79.044944,'The Forest Theatre is in Battle Park, where outdoor drama was first performed in 1916 to celebrate the 300th anniversary of Shakespeare’s death. W.C. Coker, faculty botanist who had developed the Arboretum nearby, chose the location.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('ca','Coker Arboretum',35.913823, -79.048991,'In 1903, Dr. William Chambers Coker, the university’s first professor of botany, began developing a five-acre boggy pasture into an outdoor university classroom for the study of trees, shrubs, and vines native to North Carolina. Beginning in the 1920s and continuing through the 1940s, Dr. Coker added many East Asian trees and shrubs. ')");
+        db.execSQL("INSERT INTO Landmarks VALUES('mbt','Morehead-Patterson Bell Tower',35.908874, -79.049238,'Each hour of the day the Morehead-Patterson Bell Tower rings to remind students and faculty of the generosity of two families associated with the university since its earliest days.Seniors traditionally have the opportunity to climb the tower’s steps and savor the view a few days prior to May commencement.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('oe','Old East',35.912593, -79.050869,'The first building constructed to house America’s first state university. The cornerstone was laid on October 12, 1793.\n" +
+                "\n" +
+                "Nearly a century later, October 12 was declared Carolina’s birthday, or as folks on campus refer to it, University Day. The building was declared a national Historic Landmark in 1966.\n" +
+                "\n" +
+                "Today, a renovated Old East houses men and women students as a residence hall.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('ow','Old Well',35.912360, -79.051219,'At the heart of campus stands the visual symbol of the University of North Carolina at Chapel Hill. For many years the Old Well served as the sole water supply for Old East and Old West dormitories.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('pt','Playmakers Theater',35.916313, -79.053548,'The most beautiful building on the Carolina campus, to many tastes, is this Greek Revival temple considered to be one of the masterworks of New York architect Alexander Jackson Davis. He designed the building as an unlikely combination library and ballroom; later it was used for agricultural chemistry and law. For many years, it was the theatre of the Carolina Playmakers, who were largely responsible for developing folk drama in the United States.')");
+        db.execSQL("INSERT INTO Landmarks VALUES('uss','UNC Student Store',35.90980520000001, -79.04834340000002,'One of the most modern campus stores in the United States, this $1.5 million contemporary structure provides textbooks, fiction and nonfiction books, computers and software, and many other items for the UNC-Chapel Hill campus.')");
     }
 
 }
